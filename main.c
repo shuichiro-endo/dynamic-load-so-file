@@ -86,7 +86,6 @@ int main(int argc, char **argv)
 	}
 	pdlerror();
 	
-	
 	double rad = 0.0;
 	double M_PI = 3.14159265358979323846;
 	double result = 0.0;

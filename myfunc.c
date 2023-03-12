@@ -108,8 +108,12 @@ unsigned long get_function_address(unsigned long base_address, char *function_na
 	Elf64_Sym *pElf64_Sym = (Elf64_Sym *)symtab_d_val;
 	for(int i=1; pElf64_Sym[i].st_info!=0; i++){
 		if(!strncmp((char *)(strtab_d_val + pElf64_Sym[i].st_name), function_name, strlen(function_name)+1)){
-			function_address = base_address + pElf64_Sym[i].st_value;
-			break;
+			if(ELF64_ST_BIND(pElf64_Sym[i].st_info) == STB_WEAK && ELF64_ST_TYPE(pElf64_Sym[i].st_info) == STT_FUNC && function_address == 0){	// weak, func
+				function_address = base_address + pElf64_Sym[i].st_value;
+			}else if(ELF64_ST_BIND(pElf64_Sym[i].st_info) == STB_GLOBAL && ELF64_ST_TYPE(pElf64_Sym[i].st_info) == STT_FUNC){	// global, func
+				function_address = base_address + pElf64_Sym[i].st_value;
+				break;
+			}
 		}
 	}
 #ifdef _DEBUG
