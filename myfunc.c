@@ -89,30 +89,39 @@ unsigned long get_function_address(unsigned long base_address, char *function_na
 	// DT_SYMTAB and DT_STRTAB
 	unsigned long symtab_d_val = 0;
 	unsigned long strtab_d_val = 0;
+	unsigned long versym_d_val = 0;		// .gnu.version (symbol version table)
 	Elf64_Dyn *pElf64_Dyn = (Elf64_Dyn *)dynamic_p_vaddr;
 	for(int i=0; pElf64_Dyn[i].d_tag!=0; i++){
 		if(pElf64_Dyn[i].d_tag == DT_SYMTAB){
 			symtab_d_val = pElf64_Dyn[i].d_un.d_val;
 		}else if(pElf64_Dyn[i].d_tag == DT_STRTAB){
 			strtab_d_val = pElf64_Dyn[i].d_un.d_val;
+		}else if(pElf64_Dyn[i].d_tag == DT_VERSYM){
+			versym_d_val = pElf64_Dyn[i].d_un.d_val;
 		}
 	}
 #ifdef _DEBUG
 	printf("[I] symtab_d_val:0x%lx\n", symtab_d_val);
 	printf("[I] strtab_d_val:0x%lx\n", strtab_d_val);
+	printf("[I] versym_d_val:0x%lx\n", versym_d_val);
 #endif
 	
 	
 	// search function name
 	unsigned long function_address = 0;
 	Elf64_Sym *pElf64_Sym = (Elf64_Sym *)symtab_d_val;
+	unsigned short *pversym = (unsigned short *)versym_d_val;
 	for(int i=1; pElf64_Sym[i].st_info!=0; i++){
 		if(!strncmp((char *)(strtab_d_val + pElf64_Sym[i].st_name), function_name, strlen(function_name)+1)){
 			if(ELF64_ST_BIND(pElf64_Sym[i].st_info) == STB_WEAK && ELF64_ST_TYPE(pElf64_Sym[i].st_info) == STT_FUNC && function_address == 0){	// weak, func
-				function_address = base_address + pElf64_Sym[i].st_value;
+				if(!(pversym[i] & 0x8000)){	// check non hidden version
+					function_address = base_address + pElf64_Sym[i].st_value;
+				}
 			}else if(ELF64_ST_BIND(pElf64_Sym[i].st_info) == STB_GLOBAL && ELF64_ST_TYPE(pElf64_Sym[i].st_info) == STT_FUNC){	// global, func
-				function_address = base_address + pElf64_Sym[i].st_value;
-				break;
+				if(!(pversym[i] & 0x8000)){	// check non hidden version
+					function_address = base_address + pElf64_Sym[i].st_value;
+					break;
+				}
 			}
 		}
 	}
