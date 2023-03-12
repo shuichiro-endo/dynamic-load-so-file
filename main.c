@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 	if(libc_base_address == 0){
 #ifdef _DEBUG
 		printf("[E] search_libc_base_address error.\n");
-		return 1;
 #endif
+		return 1;
 	}
 #ifdef _DEBUG
 	printf("[I] libc_base_address:0x%lx\n", libc_base_address);
@@ -64,8 +64,8 @@ int main(int argc, char **argv)
 	if(!handle_libm){
 #ifdef _DEBUG
 		printf("[E] dlopen error:%s.\n", pdlerror());
+#endif
 		return 1;
-#endif	
 	}
 	pdlerror();
 		
@@ -81,8 +81,8 @@ int main(int argc, char **argv)
 	if(error != NULL){
 #ifdef _DEBUG
 		printf("[E] dlsym error:%s.\n", error);
-		return 1;
 #endif
+		return 1;
 	}
 	pdlerror();
 	

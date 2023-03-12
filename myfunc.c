@@ -37,8 +37,8 @@ unsigned long search_libc_base_address()
 	if(file == NULL){
 #ifdef _DEBUG
 		printf("[E] fopen error.\n");
-		return 0;
 #endif
+		return 0;
 	}
 	
 	while(fgets(buffer, sizeof(buffer), file)){
@@ -127,8 +127,8 @@ _dlopen get_dlopen_function_address(unsigned long libc_base_address)
 	if(pdlopen == 0){
 #ifdef _DEBUG
 		printf("[E] cannot get dlopen function address.\n");
-		return 0;
 #endif
+		return 0;
 	}
 	
 	return pdlopen;
@@ -142,8 +142,8 @@ _dlsym get_dlsym_function_address(unsigned long libc_base_address)
 	if(pdlsym == 0){
 #ifdef _DEBUG
 		printf("[E] cannot get dlsym function address.\n");
-		return 0;
 #endif
+		return 0;
 	}
 	
 	return pdlsym;
@@ -157,8 +157,8 @@ _dlclose get_dlclose_function_address(unsigned long libc_base_address)
 	if(pdlclose == 0){
 #ifdef _DEBUG
 		printf("[E] cannot get dlclose function address.\n");
-		return 0;
 #endif
+		return 0;
 	}
 	
 	return pdlclose;
@@ -172,8 +172,8 @@ _dlerror get_dlerror_function_address(unsigned long libc_base_address)
 	if(pdlerror == 0){
 #ifdef _DEBUG
 		printf("[E] cannot get dlerror function address.\n");
-		return 0;
 #endif
+		return 0;
 	}
 	
 	return pdlerror;
